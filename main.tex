@@ -64,22 +64,88 @@
 
 \section{Introduction and Background}
 
+We are to compare two cosmological models, $\Lambda$CDM and $w$CDM, which give different expressions for $E(z)$. These are given in equations \eqref{eq:lambda_model} and \eqref{eq:omega_model} \cite{project_pm}. $\Lambda$CDM describes a flat cosmology, whilst $w$CDM includes a dark energy equation of state. Note that $\Lambda$CDM is a two-parameter model and that $w$CDM is a three-parameter model, and that $w$CDM reduces to $\Lambda$CDM for $w=-1$. 
 
+\begin{align}
+    \label{eq:lambda_model}
+    \Lambda\text{CDM}: \hspace{10px} E(z) &= \Omega_{M,0}(1+z)^3 + \Omega_{\Lambda,0} \\
+    \label{eq:omega_model}
+    w\text{CDM}: \hspace{10px} E(z) &= \Omega_{M,0}(1+z)^3 + \Omega_{\Lambda,0}(1+z)^{3(1+w)} 
+\end{align}
+Furthermore, the parameters $\Omega_{M,0}$ and $\Omega_{\Lambda,0}$ should sum to one according to the Friedman equation $1 = \Omega_{M,0} + \Omega_{\Lambda,0} + \Omega_{k,0}$ in our case, since $\Omega_{k,0} = 0$ \cite{project_pm}.
 
+A straightforward method for comparing two models $M_1$ and $M_2$ is to compute their respective marginal likelihoods for some collected data $\mathcal{D}$, $p\left(\mathcal{D} \vert M, I \right)$ \cite{lec3}. However, this requires marginalizing over the model parameters $\theta$, which may be intractible in practice. An alternative method for model comparison is the use of Information Criteria (IC), which are methods for scoring and ranking models \cite{lec3}. We will specifically use the Akaike Information Criterion (AIC) and the Bayesian Information Criterion (BIC), which both are approximations valid in the large data limit. Both AIC and BIC are given in equation \eqref{eq:IC}. 
+
+\begin{align}
+    \label{eq:AIC}
+    \text{AIC} &= 2 \log{p\left(\mathcal{D} \vert \theta_{\star} \right)} - 2N_p \\
+    \label{eq:BIC}
+    \text{BIC} &= 2 \log{p\left(\mathcal{D} \vert \theta_{\star} \right)} - 2N_p \log{N_d},
+\end{align}
+where $p\left(\mathcal{D} \vert \theta_{\star} \right)$ is the likelihood for data $\mathcal{D}$ evaluated at the maximum likelihood estimator (MLE) $\theta_\star$, i.e. the maximum likelihood value. $N_p$ is the number of model parameters, and $N_d$ is the number of data points. Note that both the AIC and BIC scores are defined such that a higher score indicates a better model \cite{lec3}.
+
+ 
 \section{Methodology}
 In this short section we present our general approaches for the two tasks at hand.
 
 \subsection[Task 1]{Task 1: Inference in the low-$z$ regime}
+We are tasked with performing Bayesian anlysis to extract the joint probability distribution for $H_0$ and $q_0$. For this we have the model \begin{equation*}
+    d_L(z) = (1 + z )\int_0^z \frac{dz'}{H(z')},
+\end{equation*}
+where $H$ is the Hamiltonian, $z$ the red shift and $d_l$ is the distance between earth and the supernova. For small $z$ we can perform a Taylor expansion and get the distances as 
+\begin{equation*}
+    d_L(z) \approx \frac{c}{H_0} (z + \frac{1}{2}(1 - q_0)z^2).
+\end{equation*}
+We then want to use Bayesian analysis to fit this model $M(H_0,q_0; z) = d_L(Z)$ to observed data. Lets define a parameter vector $\theta = (H_0, q_0)$, we then have the relation between our model and measured data as
+\begin{equation*}
+    d_i = M(\theta; z_i) + \varepsilon_i + \delta(z_i),
+\end{equation*}
+where $d_i$ is measured data of $d_L$, $\varepsilon_i$ is measurement uncertainties and $\delta(z_i)$ is a model discrepancies. If we assume that the overall theory is accurate we can drop the model discrepancies since the Taylor expansion should be valid for small $z$. We then assume hetroscedatic, independent and identically distributed errors, i.e $\varepsilon_i \sim N(0, \sigma_i)$. From this assumption we can later write down our likelihood. But we first turn to determine the standard deviations $\sigma_i$. Our data, that are taken from measurement, comes with some error bars, $\delta_d$, which is the "sum" of all uncertainty in the experiments. This measured uncertainties for each datum gives us, for each measured datum,  relative to all other data points, an uncertainty between the data and our model. To incorporate that there might be an overall scaling of these uncertainties we take $\sigma_i^2 = \sigma^2 \delta_d_i^2 \frac{1}{n_d}\sum \frac{1}{\delta_d^2} = \sigma W^{-1}$ and treat $\sigma$ as an unknown parameter in our Bayesian analysis. Here $W$ is the wight vector and we have normalized it to sum to $n_d$ the number of data points used.
+\\\\
+So to get the joint probability distribution of our parameter we use Bayes theorem 
+\begin{equation*}
+    P(\theta| D, I) =  \frac{p(D|\theta, I)p(\theta|I)}{p(D)}.
+\end{equation*}
+We get, through the iid asumption, our likelihood as
+\begin{equation*}
+    p(D|\theta) =  \prod_i p(d_i|\theta) = \text{exp}\left(-\sum_i \frac{1}{2\sigma_i^2}\left[d_i - M(\theta;z_i)\right]^2\frac{}{}\right) =  \text{exp}\left(-\sum_i \frac{W}{2\sigma^2}\left[d_i - M(\theta;z_i)\right]^2\frac{}{}\right).
+\end{equation*}
+For the $H_0$ we used a uniform prior between zero and 3000 km/s and for $q_0$ we used an uniform prior between -100 and 100. For the unknown error scale we used a inverse gamma prior with parameters $\alpha = 0.12185$ and $\beta = 2.46569$. Since we for now only are interested in relative probabilities we neglect the overall normalisation of the marginal likelihood. We thus have an expression of our full posterior which we know need to sample. To sample the posterior we used the NUTS sampling algorithm which is the No-U-Turn algorithm in Hamiltonian Monte Carlo. Using this algorithm we started four walkers which took 4000 steps each, and using the traces of the walker we could extract our joint posterior distribution. We where also tasked with checking if we 
+found convincing evidence the acceleration of the expansion of the universe. The acceleration of the expansion is described by $q_0$ and the expansion is accelerating if it is smaller then zero and decelerating if it is larger. To draw this conclusion we needed to know the probability distribution over $q_0$ which we got from marginalising our posterior over the other parameters
+\begin{equation*}
+    p(q_0|D,I) = \int p(q_0,H_0, \sigma|D,I) d H_0 d\sigma.
+\end{equation*}
 
-\subsection[Task 2]{Task 2: Model comparison of $\Lambda$CDM and $\omega$CDM}
+\\\\
+After this we also want to do a posterior predictive plot over the distance modules against the red shift. 
+
+\subsection[Task 2]{Task 2: Model comparison of $\Lambda$CDM and $w$CDM}
+
+The second part to analyse is to compare the two cosmological models $\Lambda$CDM and $w$CDM, defined in equations \eqref{eq}. For this part, we utilized all the given data, i.e. over the whole $z$-regime. As in the previous task, we start by defining the priors, likelihoods and posteriors for the two models. 
+
+\begin{equation}
+    \label{eq:likepriorpost}
+    stuff here
+\end{equation}
+Note that we assume heteroscedastic errors, but with a known error scale as compared to an unknown one in the previous task. The errors are thus the measurement errors squared, $\sigma_i^2$, and each data point is thus weighted according to its known measurement error. This knowledge of the measurement errors is expressed by conditioning the distributions in equation \eqref{eq:likepriorpost} on $I$. Also note that we used uniform priors for the parameters $\Omega_{M_0}$, $\Omega_{\Lambda_0}$ and $w$. Both $\Omega_{M_0}$, $\Omega_{\Lambda_0}$ were given a $\mathcal{U}(0,1)$ prior, since they correspond to dimensionless relative density parameters which means that they are non-negative, and according to the Friedman equation they must sum to 0 (if one includes $\Omega_k$ in the notation of \cite{project_pm}). $w$ was described using a $\mathcal{U}(-\infty,\infty)$ prior since we expected $w$ to be in the vicinity of $w=-1$ at which $\Lambda$CDM reduces to $w$CDM and we thus assume $w$ to not differ too far from this value, since $\Lambda$CDM and $w$CDM are expected to describe the same data.
+Furthermore, we interpreted the parameter $w$ in the $w$CDM-model as a model parameter, not as a hyperparameter, and it was thus inferred in the same manner as $\Omega_{M_0}$ and $\Omega_{\Lambda_0}$. This means that $\Lambda$CDM is a two-parameter model and $w$CDM is a three-parameter model in our implementation.
+
+As a first step of the model comparison, the AIC and BIC scores for the two models as given in equations \eqref{eq:AIC} and \eqref{eq:BIC} were computed. The maximum likelihood value enters in both AIC and BIC, which we retrieved by minimizing the negative logarithm of the likelihoods defined in equation \eqref{like}, using the \texttt{minimize} optimizer from SciPy \ref{}. The starting point values for the minimization was $\Omega_{M_0}=0.5$, $\Omega_{\Lambda_0}=0.5$ and $w=-1$, these points corresponds to roughly the middle of their respective priors. 
+
+To further the model comparison we also studied the central values for the dark energy parameters $\Omega_M$ and $\Omega_\Lambda$. To this end we sampled the posterior for the joint probability function using MCMC (implemented in \texttt{emcee} in Python), and calculated the respective mean and the median values over these samples. The mode values whereo btained as the MLE from maximizing the likelihoods in obtaining the AIC and BIC scores. The MCMC sampler was run with 1000 burn-in steps (i.e. steps that were discarded) and 4000 sampling steps. 
+
+Lastly, the posterior samples where used to obtain the marginal posterior distribution for $\Omega_{M_0}$, $p\left(\Omega_{M_0}\vert \mathcal{D}_{SCP} M_{\Lambda CDM} I\right)$. This was extracted from the MCMC samples by creating a histogram from the chain of obtained $\Omega_{M_0}$ values.
 
 \section{Results and discussion}
 
-
-
 \subsection[Task 1]{Task 1: Inference in the low-$z$ regime}
 
-\subsection[Task 2]{Task 2: Model comparison of $\Lambda$CDM and $\omega$CDM}
+\subsection[Task 2]{Task 2: Model comparison of $\Lambda$CDM and $w$CDM}
+
+The obtained AIC and BIC scores together with the maximum posterior estimates (MPE) of the parameters as obtained from maximizing the (log) likelihood using Scipy are given in table \ref{tab:AIC_BIC} above. As expcted, the MPE for $\Omega_{M,0}$ and $\Omega_{\Lambda,0}$ sum to 1. We observe that $\Lambda$CDM achieves a higher score than $w$CDM, indicating that $\Lambda$CDM is a better model for describing the data. However, this may largely be due to the extra parameter in $w$CDM; the AIC scores and BIC scores for $w$CDM are slightly higher than for $\Lambda$CDM when $w$ is assumed known to be the MPE as obtained from the minimization, i.e. when $w$CDM is interpreted as a two-parameter model with one hyperparameter $w$. This is not so surprising though, as interpreting $w$ as a hyperparameter and setting it to the MPE is the same as a increasing the degrees of freedom in the model for fitting to the data, but without penalizing the model for it. Thus, we would expect that interpreting $w$ as a hyperparameter would lead to a detrimental overfit to the data. An interpretation of $\Lambda$CDM outperforming $w$CDM could be that a flat cosmology is better at explaining the obtained SCP data.
+
+Moving on to the model parameter inference and analysis, the obtained posterior central values for $\Omega_{M,0}$ and $\Omega_{\Lambda,0}$ are given in table \ref{tab:central_values}. The central values are all very similar, which indicates that the posterior distributions for $\Omega_{M,0}$ and $\Omega_{\Lambda,0}$ are unimodal and fairly symmetric. This is more easily seen in the corner plot and posterior distribution for $\Omega_{M,0}$ in figure \ref{fig:posterior_task2}. $\Omega_{M,0}$ and $\Omega_{\Lambda,0}$ are observed to be anti-correlated which is expected for them to sum to 1 according to the Friedman equation. Studying the posterior distribution for $\Omega_{M,0}$, we observe that the distribution is indeed unimodal centered around $\Omega_{M,0}\approx0.3$. This would correspond to  
+
 
 \printbibliography
 
