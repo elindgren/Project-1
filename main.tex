@@ -39,6 +39,36 @@
     stringstyle=\color[rgb]{0.627,0.126,0.941},
 }
 
+\usepackage{tikz}
+\usepackage{pgfplots} 
+\usepackage{pgfgantt}
+\usepackage{pdflscape}
+\usepackage{subcaption}
+\usepackage{adjustbox}
+\usepackage{siunitx}
+\pgfplotsset{compat=newest} 
+\pgfplotsset{plot coordinates/math parser=false}
+\usepackage{pdfpages}
+\usepackage{placeins}
+
+
+
+
+
+\newlength\fwidth
+\newlength\fheight
+\pagestyle{myheadings}
+
+\pgfplotsset{every axis/.append style={
+        scaled y ticks = false, 
+        scaled x ticks = false, 
+        y tick label style={/pgf/number format/.cd, fixed, fixed zerofill,
+                            int detect,1000 sep={\;},precision=3},
+        x tick label style={/pgf/number format/.cd, fixed, fixed zerofill,
+                            int detect, 1000 sep={},precision=3}
+    }
+}
+
 \usepackage{eso-pic}
 \usepackage{ifthen}
 
@@ -52,17 +82,23 @@
 \usepackage{siunitx}
 \usepackage{enumitem}
 
-\newlength\fwidth
-
 \title{Project 1: Cosmological models}
-\author{Kevin Andersson - CID: kevinan -- Eric Lindgren - CID: ericlin}
-\date{November 2020}
+\author{
+  Kevin Andersson\\
+  \texttt{kevinan@student.chalmers.se}
+  \and
+   Eric Lindgren\\
+  \texttt{ericlin@student.chalmers.se}
+}
+
+\markright{Kevin Andersson and Eric Lindgren, Group 7}
 
 \begin{document}
 
 \maketitle
+
 \pagenumbering{gobble}% Remove page numbers (and reset to 1)
-\clearpage
+
 
 \pagenumbering{arabic}% Arabic page numbers (and reset to 1)
 \setcounter{page}{1}
@@ -72,7 +108,7 @@ In modern cosmology, scientist believe that the universe is expanding and that t
     \label{eq:friedman}
     1 = \Omega_{M} + \Omega_{k} + \Omega_{\Lambda}.
 \end{equation}
-$\Omega_M$ is dimensionless matter density parameter, $\Omega_\Lambda$ is related to the dark energy density and $\Omega_k$ to the topology of the universe i.e negative, positive or zero curvature. One way of examine the expansion of the universe is to look at supernovas far away, which all explode with the same luminosity. One can therefore study the distance and red shift of the supernova and relate this to the the Hubble parameter via the Friedman equations. Some alterations in the Friedman equation due to for example including radiation densities and dark-energy equation of state leads to different cosmological models. Two of them are reduced $\Lambda$CDM and $w$CDM, both of which assumes a flat space time. The two cosmological models differ in the way they relate the Hubbel parameter to the red shift $H(z) = H_0\sqrt{E(z)}$, which is described by equations \eqref{eq:lambda_model} and \eqref{eq:omega_model} \cite{project_pm}.
+$\Omega_M$ is dimensionless matter density parameter, $\Omega_\Lambda$ is related to the dark energy density and $\Omega_k$ to the topology of the universe i.e negative, positive or zero curvature. One way of examine the expansion of the universe is to look at supernovas far away, which all explode with the same luminosity. One can therefore study the distance and red shift of the supernova and relate this to the the Hubble parameter via the Friedman equations. Some alterations in the Friedman equation due to for example including radiation densities and dark-energy equation of state leads to different cosmological models. Two of them are reduced $\Lambda$CDM and $w$CDM, both of which assumes a flat space time ($\Omega_{k,0}=0$). The two cosmological models differ in the way they relate the Hubble parameter to the red shift $H(z) = H_0\sqrt{E(z)}$, which is described by equations \eqref{eq:lambda_model} and \eqref{eq:omega_model} \cite{project_pm}.
 
 %We are to compare two cosmological models, $\Lambda$CDM and $w$CDM, which give different expressions for $E(z)$. These are given in equations \eqref{eq:lambda_model} and \eqref{eq:omega_model} \cite{project_pm}. $\Lambda$CDM describes a flat cosmology, whilst $w$CDM includes a dark energy equation of state. Note that $\Lambda$CDM is a two-parameter model and that $w$CDM is a three-parameter model, and that $w$CDM reduces to $\Lambda$CDM for $w=-1$. 
 
@@ -107,7 +143,7 @@ where the decelerating parameter $q_0 = \frac{1}{2}(\Omega_M - 2 \Omega_\Lambda)
 \begin{equation*}
     \mu_i = M(\theta; z_i) + \varepsilon_i + \delta(z_i),
 \end{equation*}
-where $d_i$ is measured data of $\mu$, $\varepsilon_i$ the measurement uncertainty associated with $d_i$ and $\delta(z_i)$ is the model discrepancy. If we assume that the overall theory is accurate we can drop the model discrepancies since the Taylor expansion should be valid for small $z$. We then assume heteroscedastic, independent and identically distributed errors, i.e $\varepsilon_i \sim N(0, \sigma_i)$. From this assumption we can later write down our likelihood. But we first turn to determine the standard deviations $\sigma_i$. Our data, that are taken from measurement, comes with some error bars, $\delta_d$, which is the "sum" of all uncertainty in the experiments. This measured uncertainty for each datum gives us, for each measured datum, relative to all other data points, an uncertainty between the data and our model. To incorporate that there might be an overall scaling of these uncertainties we take $\sigma_i^2 = \sigma^2 \delta_{d_i}^2 \frac{1}{n_d}\sum \frac{1}{\delta_d^2} = \sigma W^{-1}$ and treat $\sigma$ as an unknown parameter in our Bayesian analysis. Here $W$ is the weight vector and we have normalized it to sum to $n_d$, i.e. the number of data points used.
+where $d_i$ is measured data of $\mu$, $\varepsilon_i$ the measurement uncertainty associated with $d_i$ and $\delta(z_i)$ is the model discrepancy. If we assume that the overall theory is accurate we can drop the model discrepancies since the Taylor expansion should be valid for small $z$. We then assume heteroscedastic and independent and errors, i.e $\varepsilon_i \sim N(0, \sigma_i)$. From this assumption we can later write down our likelihood. But we first turn to determine the standard deviations $\sigma_i$. Our data, that are taken from experiments, comes with some error bars, $\delta_d$, each which is the "sum" of all uncertainty in  measuring that datum. This measured uncertainty for each datum gives us, relative to all other data points, an uncertainty between the data and our model. To incorporate that there might be an overall scaling of these uncertainties we take $\sigma_i^2 = \sigma^2 W^{-1}$, where $ W = {\delta_{d_i}}^{-2} \frac{n_d}{\sum {{\delta_{d_i}}^{-2}}}$ and we treat $\sigma^2$ as an unknown parameter in our Bayesian analysis. Here $W$ is the weight matrix and which is normalized to sum to $n_d$, i.e. the number of data points used.
 %Note also that the data was given to us via the distance modules and its uncertanties, so we calculated $d_L$ and its uncertenty via
 %\begin{equation*}
 %\begin{split}
@@ -116,7 +152,7 @@ where $d_i$ is measured data of $\mu$, $\varepsilon_i$ the measurement uncertain
 %\end{split}
 %\end{equation*}
 \\\\
-So to get the joint probability distribution of our parameter we use Bayes theorem 
+To get the joint probability distribution of our parameter we use Bayes theorem 
 \begin{equation*}
     P(\theta| D, I) =  \frac{p(D|\theta, I)p(\theta|I)}{p(D)}.
 \end{equation*}
@@ -124,17 +160,17 @@ We get, through the iid assumption, our likelihood as
 \begin{equation*}
     p(D|\theta) =  \prod_i p(d_i|\theta) = \text{exp}\left(-\sum_i \frac{1}{2\sigma_i^2}\left[d_i - M(\theta;z_i)\right]^2\frac{}{}\right) =  \text{exp}\left(-\sum_i \frac{W}{2\sigma^2}\left[d_i - M(\theta;z_i)\right]^2\frac{}{}\right).
 \end{equation*}
-For $H_0$ we used a uniform prior between 50 and 100 km/s/Mpc and for $q_0$ we used an uniform prior between -2 and 2. The chosen prior for $H_0$ is motivated from that all large controversies regarding the value of $H_0$ during the 2000-century has put it somewhere in between 50 and 100 km/s/Mpc \cite{}. The prior for $q_0$ comes from the assumption that the Friedman equation puts $\Omega_M$ and $\Omega_\Lambda$ in the order of 1 and that they can't be negative \cite{}. For the unknown error scale we used a inverse gamma prior with parameters $\alpha = 0.12185$ and $\beta = 2.46569$. Since we for now only are interested in relative probabilities we neglect the overall normalisation, i.e the marginal likelihood. We thus have an expression of our full posterior which we now need to sample. To sample the posterior we used the NUTS sampling algorithm, which is the No-U-Turn algorithm in Hamiltonian Monte Carlo. Using this algorithm we started four walkers which took 1000 burn-in steps and 4000 sampling steps each, and using the traces of the walkers we could extract our joint posterior distribution. We where also tasked with checking if we found convincing evidence that the acceleration of the expansion of the universe. The acceleration of the expansion is described by $q_0$ and the expansion is accelerating if it is smaller then zero and decelerating if it is larger. To draw this conclusion we needed to know the probability distribution over $q_0$ which we got from marginalising our posterior over the other parameters
+For $H_0$ we used a uniform prior between 50 and 100 km/s/Mpc and for $q_0$ we used an uniform prior between -2 and 2. The chosen prior for $H_0$ is motivated from that all large controversies regarding the value of $H_0$ during the 2000-century has considered values in between 50 and 100 km/s/Mpc \cite{Hubbles_law}. The prior for $q_0$ comes from the assumption that the Friedman equation puts $\Omega_M$ and $\Omega_\Lambda$ in the order of 1 and that they can't be negative \cite{project_pm}. For the unknown error scale we used a inverse gamma prior with parameters $\alpha = 0.12185$ and $\beta = 2.46569$, which are taken from the given data file for this assignment. Since we for now only are interested in relative probabilities we neglect the overall normalisation, i.e the marginal likelihood. We thus have an expression of our full posterior which we now need to sample. To sample the posterior we used the NUTS sampling algorithm, which is the No-U-Turn algorithm in Hamiltonian Monte Carlo. Using this algorithm we started four walkers which took 1000 burn-in steps and 4000 sampling steps each, and using the traces of the walkers we could extract our joint posterior distribution. We where also tasked with checking if we found convincing evidence that the expandsion of the universe is accelerating. The acceleration of the expansion is described by $q_0$ and the expansion is accelerating if it is smaller then zero and decelerating if it is larger. To draw this conclusion we needed to know the probability distribution over $q_0$ which we obtained by marginalising our posterior over the other parameters
 \begin{equation*}
     p(q_0|D,I) = \int p(q_0,H_0, \sigma|D,I) d H_0 d\sigma.
 \end{equation*}
 \newline
 \\\\
-After this we also want to do a posterior predictive plot over the distance modules against the red shift. A posterior predictive distribution over the distances is extracted by evaluating the integral 
+We then generated a posterior predictive plot over the distance modules against the red shift. A posterior predictive distribution over the distances is extracted by evaluating the integral 
 \begin{equation*}
     p(\mu| D) = \int p(\mu|\theta, \sigma, D) p(\theta, \sigma| D) d\theta d\sigma,
 \end{equation*}
-where $ p(\theta, \sigma| D)$ is the posterior and $p(\mu|\theta, \sigma, D)$ is the likelihood. To plot the posterior predictive we want to sample the posterior predictive distribution which we do by drawing many samples of $\theta$ and $\sigma$ from our posterior.  We then evaluating $\mu$ for all these samples as 
+where $ p(\theta, \sigma| D)$ is the posterior and $p(\mu|\theta, \sigma, D)$ is the likelihood. To plot the posterior predictive we sampled the posterior predictive distribution by drawing samples of $\theta$ and $\sigma$ from our posterior. We then evaluate $\mu$ for all these samples as 
 \begin{equation*}
     \mu(z) = M(\theta, z) + \varepsilon, \quad \varepsilon \sim N(0, \sigma),
 \end{equation*}
@@ -184,8 +220,11 @@ Lastly, the posterior samples from the $\Lambda$CDM-model where used to obtain t
 
 \section{Results and discussion}
 
+In this section we present our inference for $H_0$ in the low-$z$ regime, as well as the model comparison of $\Lambda$CDM and $w$CDM.
+
 \subsection[Task 1]{Task 1: Inference in the low-$z$ regime}
-In figure \ref{fig:Joint_dist} the joint distribution of $H_0$, $q_0$ and $\sigma$ is represented as a corner plot. We can see from the plot that  the marginalized distribution resembles a normal distribution which indicates our sampling is converged, at least if there does not exist other modes in the distribution. We can also see that $\sigma^2$ seems to be independent of $H_0$ and $q_0$ while $H_0$ and $q_0$ seems to be correlated. This is however very reasonable since in our model we have a term with $\frac{q_0}{H_0}$ so if $H_0$ increases then the magnitude of $q_0$ also does which we observe in the figure. We can also see from the distribution marginalized  over $H_0$ and $\sigma$ that all probability density of $q_0$ lies below zero, with a mode at $-0.42$ and a standard deviation of $\pm 0.09$. We can thus with very high belief draw the conclusion that the universes expansion is accelerating.  
+In figure \ref{fig:Joint_dist} the joint distribution of $H_0$, $q_0$ and $\sigma$ is represented as a corner plot. We observe that the marginalized distribution resembles a normal distribution which indicates our sampling has converged, at least if there does not exist other modes in the distribution. We can also see that $\sigma^2$ seems to be independent of $H_0$ and $q_0$ while $H_0$ and $q_0$ seems to be correlated. This is very reasonable since in our model we have a term with $\frac{q_0}{H_0}$ so if $H_0$ increases then the magnitude of $q_0$ also does. We can also see from the distribution marginalized over $H_0$ and $\sigma$ that all probability density of $q_0$ lies below zero, with a mode at $-0.42$ and a standard deviation of $\pm 0.09$. We can thus with a high degree of belief draw the conclusion that the universes expansion is accelerating.  
+
 % \begin{figure}[H]
 %     \centering
 %     \includegraphics[width = 0.8\textwidth]{figures/corner.png}
@@ -194,38 +233,41 @@ In figure \ref{fig:Joint_dist} the joint distribution of $H_0$, $q_0$ and $\sigm
 % \end{figure}
 % \ref{fi}
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering
     \begin{subfigure}{.55\textwidth}
           \centering
           \includegraphics[width=0.9\linewidth]{figures/corner.png}
-          \caption{Caption}
+          \caption{Corner plot of joint posterior distribution.}
           \label{fig:Joint_dist}
     \end{subfigure}%
     \begin{subfigure}{.45\textwidth}
           \centering
           \includegraphics[width=0.9\linewidth]{figures/predictive_plot_mu.png}
-          \caption{Caption}
+          \caption{Mean and 68 \% uncertainty band of posterior predictive distribution for $\mu$ together with data in low and high $z$-regim.}
           \label{fig:posterior_pred}
     \end{subfigure}
-    \caption{Caption.}
+    \caption{The posterior distribution together with its psterior predictive plot. }
     \label{fig:posterior_task1}
 \end{figure}
 
-In figure \ref{fig:posterior_pred} we can see our posterior predictive plot with the mean prediction and with the standard deviation uncertainty. We see that our prediction coincide very well with our data in the low regime and the errors there are also relatively small. For higher $z$ our prediction may be slightly off and we see that our uncertainty gets slightly bigger. This is reasonable since we have not fitted to data in this regime and our model also breaks down since we assumed low $z$ in the Taylor expansion. We also see that for very low $z$ the fit seems very accurate, since we here also can neglect the second order term in $z$ this indicate that $H_0$ has a reasonable fit. An interesting thing to note is that the broader uncertainty for larger $z$ in the posterior predictive only arise from our uncertainty of our parameters $\theta$. The data uncertainty $\sigma$ is in this framework constant for all $z$ in spite the fact that data errors seem to get slightly larger for larger $z$. We are not convinced that this is is a problem or not and some feedback regarding this would be appreciated.
+%In figure \ref{fig:posterior_pred} we can see our posterior predictive plot with the mean prediction and with the standard deviation uncertainty.
+In figure \ref{fig:posterior_pred} our obtained posterior predictive plot is given, with a mean prediction $\overline{\mu_{model}}$ and a one standard-deviation uncertainty region $\overline{\mu_{model}} \pm \sigma_{sampled}$. We see that our prediction coincide very well with our data in the low regime and the errors there are also relatively small. For higher $z$ our prediction may be slightly off and we see that our uncertainty gets slightly bigger. This is reasonable since we have not fitted to data in this regime and our model also breaks down since we assumed low $z$ in the Taylor expansion. We also see that for very low $z$ the fit seems very accurate, and since we here also can neglect the second order term in $z$ this indicate that $H_0$ has a reasonable fit. An interesting thing to note is that the broader uncertainty for larger $z$ in the posterior predictive only arise from our uncertainty of our parameters $\theta$. The data uncertainty $\sigma$ is in this framework constant for all $z$ in spite the fact that data errors seem to get slightly larger for larger $z$. A possible improvement to the modelling of the error could thus be to assume a $z$-dependent error scale instead of a constant one in this case (i.e hetroscedatic error scale instead of a homoscedastic one). We are not convinced that this is is a problem or not and some feedback regarding this would be appreciated.
 % \begin{figure}[H]
 %     \centering
 %     \includegraphics[width = 0.8\textwidth]{figures/predictive_plot_mu.png}
 %     \caption{Caption}
 %     \label{fig:posterior_pred}
 % \end{figure}
-There are a number of ways of how to improve the inference of $H_0$ and $q_0$. The first thing one should think about is the choice of priors. We have chosen relatively broad uniform priors, but one might perhaps already from the theory conclude lower bounds for the parameters. One could also consider Gaussian or other types of priors where we could have more probability density close to the parameter value we believe to be true. In these cases one could also use hyperpriors to incorporate uncertainty in the parameters of our priors. The very best way to define the prior could also be to use the posterior of some previous analyses where one perhaps used different data or estimated the parameters in a different way. The next thing one should think about is what kind of model discrepancies one has. In this case we have introduced discrepancies when performing the Taylor expansion, possibly also when assuming a flat universe and probably many more of varying importance (Einstein gravity only low energy approximation of string theory). One might then consider to extend the model to incorporate more terms in the expansion, do the full integral or include open and flat universes. If this not is possible one could also try to model the discrepancy with a Gaussian process where one might be able to use some information one have about the discrepancy to advantage, for example $\delta(z = 0) = 0$. And lastly the inference would also be better if one include more data, and can reduce the uncertainty in the data. Additional data to the inference could also be of other kinds like mention in the PM the angular power spectrum of the cosmic microwave background could also be used to test cosmological models. 
+There are a number of ways of how to improve the inference of $H_0$ and $q_0$. The first thing one should think about is the choice of priors. We have chosen relatively broad uniform priors, but one might perhaps already from the theory conclude lower bounds for the parameters. One could also consider Gaussian or other types of priors where we could have more probability density close to the parameter value we believe to be true. In these cases one could also use hyperpriors to incorporate uncertainty in the parameters of our priors. The very best way, from a Bayesian perspective, to define the prior could also be to use the posterior of some previous analyses where one perhaps used different data or estimated the parameters in a different way. The next thing one should think about is what kind of model discrepancies one has. In this case we have introduced model discrepancies when performing the Taylor expansion, possibly also when assuming a flat universe and probably many more of varying importance (e.g. Einstein gravity is only a low energy approximation of string theory). One might then consider to extend the model to incorporate more terms in the expansion, do the full integral or include open and flat universes. If this not is possible one could also try to model the discrepancy with a Gaussian process where one might be able to use some information one have about the discrepancy, for example $\delta(z = 0) = 0$. Lastly, the inference could be improved by increasing the quality of the data; not only more data with lower measurement uncertainty, but also more varied data from other sources, e.g. data on the angular power spectrum of the cosmic microwave background \cite{project_pm}.
+
+%And lastly the inference would also be better if one include more data, and can reduce the uncertainty in the data. Additional data to the inference could also be of other kinds like mention in the PM the angular power spectrum of the cosmic microwave background could also be used to test cosmological models. 
 
 
 
 \subsection[Task 2]{Task 2: Model comparison of $\Lambda$CDM and $w$CDM}
 
-\begin{table}[H]
+\begin{table}[h]
     \centering
     \caption{Obtained AIC and BIC scores for the different models, as well as the maximum likelihood estimates (MLE) for the model parameters in each case.}
     \begin{tabular}{||c | c c | c c c||} 
@@ -241,9 +283,12 @@ There are a number of ways of how to improve the inference of $H_0$ and $q_0$. T
 \end{table}
 
 
-The obtained AIC and BIC scores together with the maximum likelihood estimates (MLE) of the parameters as obtained from maximizing the (log) likelihood using Scipy are given in table \ref{tab:AIC_BIC} above. As before, the dark energy density is estimted as $\Omega_{\Lambda,0, MLE}=1-\Omega_{M,0, MLE}$. We observe that $\Lambda$CDM achieves a higher score than $w$CDM, indicating that $\Lambda$CDM is a better model for describing the data. This may largely be due to the extra parameter in $w$CDM; the extra degree of freedom that $w$CDM has in explaining the data due to the parameter $w$ does not seem to yield a significant enough benefit to compensate for the cost of adding this extra parameter. Because of this, we would expect $w$CDM to overfit to the data to a higher degree than $\Lambda$CDM. 
+The obtained AIC and BIC scores together with the maximum likelihood estimates (MLE) of the parameters as obtained from maximizing the (log) likelihood using Scipy are given in table \ref{tab:AIC_BIC} above. As before, the dark energy density is estimted as $\Omega_{\Lambda,0, MLE}=1-\Omega_{M,0, MLE}$. We observe that $\Lambda$CDM achieves a higher score than $w$CDM, indicating that $\Lambda$CDM is a better model for describing the data. This may largely be due to the extra parameter in $w$CDM; the extra degree of freedom that $w$CDM has in explaining the data due to the parameter $w$ does not seem to yield a significant enough benefit to compensate for the cost of adding this extra parameter. This is further supported by the MLE for $w$ being close to the value at which $w$CDM reduces to $\Lambda$CDM.
 
-\begin{table}[H]
+
+
+
+\begin{table}[h]
     \centering
     \caption{Obtained posterior central values for $\Omega_{M,0}$ and $\Omega_{\Lambda,0}$ for the two models. Note that all central values are similar in magnitude, which indicates a unimodal distribution for $\Omega_{M,0}$.}
     \begin{tabular}{||c | c c | c c | c c||} 
@@ -258,27 +303,14 @@ The obtained AIC and BIC scores together with the maximum likelihood estimates (
     \label{tab:central_values}
 \end{table}
 
-Moving on to the model parameter inference and analysis, the obtained posterior central values for $\Omega_{M,0}$ and $\Omega_{\Lambda,0}=1-\Omega_{M,0}$ are given in table \ref{tab:central_values}. The central values are all very similar, which indicates that the posterior distribution for $\Omega_{M,0}$ is unimodal and fairly symmetric regardless of the model used, which indicates that both models describe the data in a similar fashion. These central values are somewhat in line with estimates for $\Omega_{M,0}$ from more extensive analysis; the Planck 2018 collaboration obtained $\Omega_{M,0} = 0.321 \pm 0.013$ and $\Omega_{\Lambda,0} = 0.679 \pm 0.013$ \cite{planck} (68\% limits), a compilation of measurements from LAMBDA NASA reports values in the range $\Omega_{M,0}\in \left[0.27, 0.33 \right]$ \cite{lambdanasa} and COSMOS which reports $\Omega_{\Lambda,0} = 0.73$ \cite{cosmos}.
+Moving on to the model parameter inference and analysis, the obtained posterior central values for $\Omega_{M,0}$ and $\Omega_{\Lambda,0}=1-\Omega_{M,0}$ are given in table \ref{tab:central_values}. The central values are all very similar, which indicates that the posterior distribution for $\Omega_{M,0}$ is unimodal and fairly symmetric regardless of the model used, which indicates that both models describe the data in a similar fashion. These central values are somewhat in line with estimates for $\Omega_{M,0}$ from more extensive analysis; the Planck 2018 collaboration obtained $\Omega_{M,0} = 0.321 \pm 0.013$ and $\Omega_{\Lambda,0} = 0.679 \pm 0.013$ \cite{planck} (68\% limits), a compilation of measurements from LAMBDA NASA reports values in the range $\Omega_{M,0}\in \left[0.27, 0.33 \right]$ \cite{lambdanasa} and COSMOS which reports $\Omega_{\Lambda,0} = 0.73$ \cite{cosmos}. The discrepancy towards our results could for instance be due to differing datasets and/or possibly different methods for obtaining the estimates. Our results are also more uncertain than some of these reference values; studying the postorior distribution for $\Omega_{M,0}$ in figure \ref{fig:posterior_task2}, we observe that the distribution is centered around $\Omega_{M,0}\approx0.28$, and that a 68\% highest posterior density (HPD) region is given by $\Omega_{M,0} \in [0.265, 0.291]$. This uncertainty is for instance several orders of magnitude larger than the uncertainty obtained by Planck 2018. 
 
-Studying the posterior distribution for $\Omega_{M,0}$ in figure \ref{fig:posterior_task2}, we observe that the distribution is indeed unimodal and centered around $\Omega_{M,0}\approx0.28$. A 90\% highest posterior density (HPD) region is given by $\Omega_{M,0} \in [0.257, 0.300]$. Note that this includes some of the results from more extensive analysis, but not all of them.
-
-Our results, regarding the inference for $\Omega_{M,0}$ and $\Omega_{\Lambda,0}$, as well as comparison with other sources, indicates that we indeed live in a dark energy dominated universe, with only about $\approx 28\%$ of the universe being made up of matter.
+In summary, our inference for $\Omega_{M,0}$ and $\Omega_{\Lambda,0}$ indicates that we indeed live in a dark energy dominated universe, with only about $\approx 28\%$ of the universe being made up of matter, which is mostly in line with more extensive analysis.
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}{.5\textwidth}
-          \centering
-          \includegraphics[width=0.9\linewidth]{figures/corner_task2.png}
-          \caption{Corner plot of $p\left(\Omega_{M,0},\Omega_{\Lambda,0} \left. \right\vert D, M_{\Lambda CDM} I \right)$}
-          \label{fig:sub1}
-    \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
-          \centering
-          \includegraphics[width=0.9\linewidth]{figures/posterior_task2.png}
-          \caption{$p\left(\Omega_{M,0} \left. \right\vert D, M_{\Lambda CDM} I\right)$}
-          \label{fig:sub2}
-    \end{subfigure}
-    \caption{Posterior distribution for for $\Omega_{M,0}$ with a 90\% highest posterior density (HPD) interval. Note that the distribution is unimodal and symmetric.}
+    \includegraphics[width=0.7\linewidth]{figures/omega_m_posterior.png}
+    \caption{Posterior distribution for for $\Omega_{M,0}$, $p\left(\Omega_{M,0} \left. \right\vert D, M_{\Lambda CDM} I\right)$, with a 68\% highest posterior density (HPD) interval. Note that the distribution is unimodal and symmetric.}
     \label{fig:posterior_task2}
 \end{figure}
 
